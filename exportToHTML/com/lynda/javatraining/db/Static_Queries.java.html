@@ -1,0 +1,131 @@
+<html>
+<head>
+<title>Static_Queries.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Static_Queries.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">com.lynda.javatraining.db; 
+ 
+        </span><span class="s0">import </span><span class="s1">java.sql.*; 
+        </span><span class="s0">import </span><span class="s1">java.util.Scanner; 
+</span><span class="s0">public class </span><span class="s1">Static_Queries { 
+ 
+    </span><span class="s0">private static final </span><span class="s1">String USERNAME = </span><span class="s2">&quot;waztaz&quot;</span><span class="s1">; 
+    </span><span class="s0">private static final </span><span class="s1">String PASSWORD = </span><span class="s2">&quot;soccer123&quot;</span><span class="s1">; 
+    </span><span class="s0">private static final </span><span class="s1">String CONN_STRING = 
+            </span><span class="s2">&quot;jdbc:mysql://waztaz123.cwede4peo40a.us-west-2.rds.amazonaws.com:3306/movies&quot;</span><span class="s1">; 
+ 
+    </span><span class="s0">public static void </span><span class="s1">main(String[] args) </span><span class="s0">throws </span><span class="s1">SQLException { 
+ 
+        Scanner scanner = </span><span class="s0">new </span><span class="s1">Scanner( System.in ); 
+        Connection conn = </span><span class="s0">null</span><span class="s1">; 
+        Statement stmt = </span><span class="s0">null</span><span class="s1">; 
+        ResultSet rs = </span><span class="s0">null</span><span class="s1">; 
+ 
+        </span><span class="s0">try </span><span class="s1">{ 
+            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD); 
+            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); 
+ 
+            String query= </span><span class="s2">&quot;Select movieTitle, movieYear, StudioName</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;From Movie M1</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Where not exists (select * from Movie M2 where M1.length&gt;M2.length AND M1.studioName = M2.studioName)</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Group BY StudioName&quot;</span><span class="s1">; 
+            rs = stmt.executeQuery(query); 
+ 
+            System.out.println(</span><span class="s2">&quot;Running the query: &quot;</span><span class="s1">+ query); 
+            System.out.println(); 
+            System.out.println(</span><span class="s2">&quot;Output of the query is: &quot;</span><span class="s1">); 
+ 
+            </span><span class="s0">while </span><span class="s1">(rs.next()) { 
+                StringBuffer buffer = </span><span class="s0">new </span><span class="s1">StringBuffer(); 
+ 
+                buffer.append(</span><span class="s2">&quot;Movie Title: &quot; </span><span class="s1">+ rs.getString(</span><span class="s2">&quot;movieTitle&quot;</span><span class="s1">)); 
+                buffer.append(</span><span class="s2">&quot; MovieYear: &quot; </span><span class="s1">+ rs.getInt(</span><span class="s2">&quot;movieYear&quot;</span><span class="s1">)); 
+                buffer.append(</span><span class="s2">&quot; StudioName: &quot; </span><span class="s1">+ rs.getString(</span><span class="s2">&quot;StudioName&quot;</span><span class="s1">)); 
+ 
+ 
+                System.out.println(buffer.toString()); 
+                System.out.println(); 
+            } 
+ 
+            rs.last(); 
+ 
+ 
+            query= </span><span class="s2">&quot;Select distinct Stars.starName</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;From MovieStar, Stars, Movie, Stud</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Where MovieStar.starName = Stars.starName AND Stars.movieTitle=Movie.movieTitle and Movie.studioName=Stud.studioName AND MovieStar.address=Stud.address&quot;</span><span class="s1">; 
+ 
+            rs = stmt.executeQuery(query); 
+            System.out.println(</span><span class="s2">&quot;Running the query: &quot;</span><span class="s1">+ query); 
+            System.out.println(); 
+            System.out.println(</span><span class="s2">&quot;Output of the query is: &quot;</span><span class="s1">); 
+ 
+            </span><span class="s0">while </span><span class="s1">(rs.next()) { 
+                StringBuffer buffer = </span><span class="s0">new </span><span class="s1">StringBuffer(); 
+ 
+                buffer.append(</span><span class="s2">&quot;Star Name: &quot; </span><span class="s1">+ rs.getString(</span><span class="s2">&quot;starName&quot;</span><span class="s1">)); 
+ 
+ 
+                System.out.println(buffer.toString()); 
+                System.out.println(); 
+            } 
+ 
+            rs.last(); 
+ 
+            query= </span><span class="s2">&quot;Select Stars.starName</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;From Movie, Stars</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Where Movie.movieTitle = Stars.movieTitle</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;AND Movie.studioName=</span><span class="s0">\&quot;</span><span class="s2">MGM</span><span class="s0">\&quot;\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Group BY starName</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                    </span><span class="s2">&quot;Having COUNT(*) = (SELECT Count(Movie.movieTitle) FROM Movie Where Movie.studioName='MGM')&quot;</span><span class="s1">; 
+ 
+            rs = stmt.executeQuery(query); 
+ 
+            System.out.println(</span><span class="s2">&quot;Running the query: &quot;</span><span class="s1">+ query); 
+            System.out.println(); 
+            System.out.println(</span><span class="s2">&quot;Output of the query is: &quot;</span><span class="s1">); 
+ 
+            </span><span class="s0">while </span><span class="s1">(rs.next()) { 
+                StringBuffer buffer = </span><span class="s0">new </span><span class="s1">StringBuffer(); 
+ 
+                buffer.append(</span><span class="s2">&quot;Star Name: &quot; </span><span class="s1">+ rs.getString(</span><span class="s2">&quot;starName&quot;</span><span class="s1">)); 
+ 
+ 
+                System.out.println(buffer.toString()); 
+                System.out.println(); 
+            } 
+ 
+            rs.last(); 
+ 
+ 
+ 
+        } </span><span class="s0">catch </span><span class="s1">(SQLException e) { 
+            System.err.println(e); 
+        } </span><span class="s0">finally </span><span class="s1">{ 
+            </span><span class="s0">if </span><span class="s1">(rs != </span><span class="s0">null</span><span class="s1">) { 
+                rs.close(); 
+            } 
+            </span><span class="s0">if </span><span class="s1">(stmt != </span><span class="s0">null</span><span class="s1">) { 
+                stmt.close(); 
+            } 
+            </span><span class="s0">if </span><span class="s1">(conn != </span><span class="s0">null</span><span class="s1">) { 
+                conn.close(); 
+            } 
+        } 
+    } 
+ 
+}</span></pre>
+</body>
+</html>
